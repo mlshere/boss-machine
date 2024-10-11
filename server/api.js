@@ -108,4 +108,56 @@ apiRouter.delete('/meetings', (req, res, next) => {
     res.status(204).send();
 })
 
+
+// Bonus exercise
+// GET all work for a specific minion
+apiRouter.get('/minions/:minionId/work', (req, res) => {
+    const work = getAllFromDatabase('work').filter((task) => {
+      return task.minionId === req.params.minionId;
+    });
+    res.send(work);
+  });
+  
+  // POST new work for a specific minion
+  apiRouter.post('/minions/:minionId/work', (req, res) => {
+    req.body.minionId = req.params.minionId;
+    const newWork = addToDatabase('work', req.body);
+    if (newWork) {
+      res.status(201).send(newWork);
+    } else {
+      res.status(400).send();
+    }
+  });
+  
+  // PUT to update a specific work task
+  apiRouter.put('/minions/:minionId/work/:workId', (req, res) => {
+    const workToUpdate = getFromDatabaseById('work', req.params.workId);
+    if (workToUpdate) {
+      if (workToUpdate.minionId === req.params.minionId) {
+        req.body.id = req.params.workId;
+        const updatedWork = updateInstanceInDatabase('work', req.body);
+        res.send(updatedWork);
+      } else {
+        res.status(400).send();
+      }
+    } else {
+      res.status(404).send();
+    }
+  });
+  
+  // DELETE a specific work task
+  apiRouter.delete('/minions/:minionId/work/:workId', (req, res) => {
+    const workToDelete = getFromDatabaseById('work', req.params.workId);
+    if (workToDelete && workToDelete.minionId === req.params.minionId) {
+      const success = deleteFromDatabasebyId('work', req.params.workId);
+      if (success) {
+        res.status(204).send();
+      } else {
+        res.status(404).send();
+      }
+    } else {
+      res.status(400).send();
+    }
+  });
+  
 module.exports = apiRouter;
