@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const apiRouter = express.Router();
+const apiRouter = require('./server/api');
 module.exports = app;
 const bodyParser = require('body-parser');
 const cors = require('cors');
@@ -18,7 +18,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // Mount your existing apiRouter below at the '/api' path.
-const apiRouter = require('./server/api');
+
 app.use('/api', apiRouter);
 
 module.exports = apiRouter;
