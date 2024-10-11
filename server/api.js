@@ -11,6 +11,15 @@ const checkMillionDollarIdea = require('./checkMillionDollarIdea')
 
 
 // Minions logic
+apiRouter.param('minionId', (req, res, next, id) => {
+    const minion = getFromDatabaseById('minion', id);
+    if (minion) {
+        req.minion = minion;
+        next();
+    } else {
+        res.status(404).send();
+    }
+})
 
 apiRouter.get('/minions', (req, res, next) => {
     const minions = getAllFromDatabase('minions')
@@ -23,21 +32,12 @@ apiRouter.post('/minions', (req, res, next) => {
 });
 
 apiRouter.get('/minions/:minionId', (req, res, next) => {
-    const minion = getFromDatabaseById('minions', req.params.minionId);
-    if (minion) {
-        res.send(minion);
-    } else {
-        res.status(404).send();
-    }
+   res.send(req.minion);
 });
 
 apiRouter.put('/minions/:minionId', (req, res, next) => {
     const updatedMinion = updateInstanceInDatabase('minions', req.body);
-    if (updatedMinion) {
-        res.send(updatedMinion);
-    } else {
-        res.status(404).send();
-    }
+    res.send(updatedMinion);
 });
 
 apiRouter.delete('/minions/:minionId', (req, res, next) => {
